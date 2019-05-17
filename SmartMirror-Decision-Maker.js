@@ -8,7 +8,7 @@
  */
 
 
-Module.register("smartmirror-decision-maker", {
+Module.register("SmartMirror-Decision-Maker", {
 
 	mainManuStateObj: {
 		none: 0,
