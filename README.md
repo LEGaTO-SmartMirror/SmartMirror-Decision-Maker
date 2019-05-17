@@ -5,6 +5,6 @@ Controlles basically everything like the brain of the smart mirror.
 
 
 
-ACKNOWLEDGEMENT
+## ACKNOWLEDGEMENT
 
-This work has been supported by EU H2020 ICT project LEGaTO, contract #780681 
+This work has been supported by EU H2020 ICT project LEGaTO, contract #780681.
