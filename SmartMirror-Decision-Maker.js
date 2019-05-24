@@ -34,6 +34,8 @@ Module.register("SmartMirror-Decision-Maker", {
 
 	speechrec_aktiv: false,
 
+	flat_right_id : -1,
+
 	timeOfLastFlatRight : 0,
 	timeOfLastFlatLeft : 0,
 	timeOfLastOkay : 0,
@@ -110,6 +112,8 @@ Module.register("SmartMirror-Decision-Maker", {
 		}else if(notification === 'GESTURE_DETECTED') {
 			//var parsed_message = JSON.parse(payload)
 			this.process_gesture(payload);
+		}else if (notification === 'DETECTED_GESTURES') {
+			this.process_gestures_object(payload);
 		}else if (notification === 'HOTWORD_TRIGGERED') {
 			var wordIncluded = false;
 			this.config.speechrec_hotword.forEach(function(element) {
@@ -132,7 +136,7 @@ Module.register("SmartMirror-Decision-Maker", {
 			//console.log("test " + JSON.parse(payload)[0])
 			this.adjustViewLogin((JSON.parse(payload))[0]);
 			if (JSON.parse(payload)[0]["ID"] > 0) {
-				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 15.0);
+				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 5.0);
 				//this.sendNotification('smartmirror-TTS-en',"Hello, nice to see you");
 				var d = new Date();
 				if(d.getTime() - this.timeOFLastGreet > this.timebetweenGreets ){
@@ -152,7 +156,7 @@ Module.register("SmartMirror-Decision-Maker", {
 				this.aiartmirrorshown = false;
 				///this.sendNotification('CENTER_DISPLAY', 'TOGGLE');
 
-				this.sendNotification("smartmirror-object-detection" + "SetFPS", 5.0);
+				this.sendNotification("smartmirror-object-detection" + "SetFPS", 2.0);
 				this.sendNotification("smartmirror-facerecognition" + "SetFPS", 5.0);
 				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 1.0);
 				this.sendNotification("smartmirror-ai-art-mirror_SetFPS", 1.0);
@@ -306,23 +310,23 @@ Module.register("SmartMirror-Decision-Maker", {
 					this.sendNotification('CENTER_DISPLAY', 'OBJECT');
 					this.objectdetectionshown = !(this.objectdetectionshown);
 					if (this.objectdetectionshown) {
-						this.sendNotification("smartmirror-object-detection" + "SetFPS", 30.0);
+						this.sendNotification("smartmirror-object-detection" + "SetFPS", 25.0);
 					} else {
-						this.sendNotification("smartmirror-object-detection" + "SetFPS", 5.0)
+						this.sendNotification("smartmirror-object-detection" + "SetFPS", 2.0)
 					} 
 				}else if(transcript.includes('gesture')||transcript.includes('hand')){				
 					this.sendNotification('CENTER_DISPLAY', 'GESTURE');
 					this.gesturerecognitionshown = !(this.gesturerecognitionshown);
 					if (this.gesturerecognitionshown) {
-						this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 15.0);
+						this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 25.0);
 					} else {
-						this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 15.0);
+						this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 5.0);
 					} 
 				}else if(transcript.includes('face')||transcript.includes('gesicht')){				
 					this.sendNotification('CENTER_DISPLAY', 'FACE');
 					this.facerecognitionshown = !(this.facerecognitionshown);
 					if (this.facerecognitionshown) {
-						this.sendNotification("smartmirror-facerecognition" + "SetFPS", 30.0);
+						this.sendNotification("smartmirror-facerecognition" + "SetFPS", 25.0);
 					} else {
 						this.sendNotification("smartmirror-facerecognition" + "SetFPS", 5.0);
 					} 
@@ -331,19 +335,19 @@ Module.register("SmartMirror-Decision-Maker", {
 					this.facerecognitionshown = false;
 					this.objectdetectionshown = false;
 					this.gesturerecognitionshown = false;
-					this.sendNotification("smartmirror-object-detection" + "SetFPS", 5.0);
+					this.sendNotification("smartmirror-object-detection" + "SetFPS", 2.0);
 					this.sendNotification("smartmirror-ai-art-mirror_SetFPS", 1.0);
 					this.sendNotification("smartmirror-facerecognition" + "SetFPS", 5.0);
-					this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 15.0);
+					this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 5.0);
 				}else if(transcript.includes('show all')||transcript.includes('showALL')){
 					this.sendNotification('CENTER_DISPLAY', 'SHOWALL');
 					this.facerecognitionshown = true;
 					this.objectdetectionshown = true;
 					this.gesturerecognitionshown = true;
-					this.sendNotification("smartmirror-object-detection" + "SetFPS", 30.0);
+					this.sendNotification("smartmirror-object-detection" + "SetFPS", 25.0);
 					this.sendNotification("smartmirror-ai-art-mirror_SetFPS", 1.0);
-					this.sendNotification("smartmirror-facerecognition" + "SetFPS", 30.0);
-					this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 15.0);
+					this.sendNotification("smartmirror-facerecognition" + "SetFPS", 25.0);
+					this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 25.0);
 
 				}
 			}else if(this.mainManuState === this.mainManuStateObj.augmentations){
@@ -354,7 +358,7 @@ Module.register("SmartMirror-Decision-Maker", {
 					this.sendNotification('CENTER_DISPLAY', 'STYLE_TRANSFERE');
 					this.aiartmirrorshown = ! this.aiartmirrorshown;
 					if (this.aiartmirrorshown) {
-						this.sendNotification("smartmirror-ai-art-mirror_SetFPS", 30.0);
+						this.sendNotification("smartmirror-ai-art-mirror_SetFPS", 25.0);
 					} else {
 						this.sendNotification("smartmirror-ai-art-mirror_SetFPS", 1.0);
 					}
@@ -460,6 +464,46 @@ Module.register("SmartMirror-Decision-Maker", {
 		}
 	},
 
+	process_gestures_object: function(gesture_json_obj){
+		var self = this;
+
+		if (Object.keys(gesture_json_obj['DETECTED_GESTURES']).length == 0){
+			self.flat_right_id = -1
+			return
+		}
+
+		Object.keys(gesture_json_obj['DETECTED_GESTURES']).forEach(function (item) {
+			if (gesture_json_obj['DETECTED_GESTURES'][item]["name"] === "flat_right"){
+				if (self.flat_right_id == -1){
+					console.log("[" + self.name + "]  first flat right with id: " + parseInt(gesture_json_obj['DETECTED_GESTURES'][item]["TrackID"]));
+					self.flat_right_id = parseInt(gesture_json_obj['DETECTED_GESTURES'][item]["TrackID"])
+					self.lastHightOfFlatRight = gesture_json_obj['DETECTED_GESTURES'][item]["center"][1]
+				}else{
+					if(self.flat_right_id == parseInt(gesture_json_obj['DETECTED_GESTURES'][item]["TrackID"])){
+						if( gesture_json_obj['DETECTED_GESTURES'][item]["center"][1] > self.lastHightOfFlatRight + 0.01){
+							self.sendNotification('MAIN_MENU_DOWN');
+							self.lastHightOfFlatRight = gesture_json_obj['DETECTED_GESTURES'][item]["center"][1]
+						}else if( gesture_json_obj['DETECTED_GESTURES'][item]["center"][1] < self.lastHightOfFlatRight - 0.01){
+							self.sendNotification('MAIN_MENU_UP');
+							self.lastHightOfFlatRight = gesture_json_obj['DETECTED_GESTURES'][item]["center"][1]
+					
+						}
+					}
+				}
+				
+			}else if (gesture_json_obj['DETECTED_GESTURES'][item]["name"] === "okay_right"){
+				console.log("[" + self.name + "] okay_right clicked with id:  " + gesture_json_obj['DETECTED_GESTURES'][item]["TrackID"] );
+				var d = new Date();
+				if(d.getTime() - self.timeOfLastOkay > 1000){
+					self.sendNotification('MAIN_MENU_CLICK_SELECTED');
+					self.timeOfLastOkay = d.getTime();
+				}
+			}
+				
+		});
+		
+	},
+
 	process_gesture: function(detection_string){
 		console.log("[" + this.name + "] " + "gesture detected: " + detection_string);
 		var parsed_detection = JSON.parse(detection_string)
@@ -507,7 +551,7 @@ Module.register("SmartMirror-Decision-Maker", {
 		});
 		this.sendNotification('CENTER_DISPLAY', 'STYLE_TRANSFERE');
 		this.aiartmirrorshown = true;
-		this.sendNotification("smartmirror-ai-art-mirror_SetFPS", 30.0);
+		this.sendNotification("smartmirror-ai-art-mirror_SetFPS", 25.0);
 		}
 		} 
 	} 
