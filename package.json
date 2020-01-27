@@ -1,0 +1,12 @@
+{
+  "name": "SmartMirror-Decision-Maker",
+  "version": "1.0.0",
+  "description": "Controlls the magic mirror in the legato project",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LEGaTO-SmartMirror/SmartMirror-Decision-Maker.git"
+  },
+  "dependencies": {
+    "mysql": "latest"
+  }
+}
