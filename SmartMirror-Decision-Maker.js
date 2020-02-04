@@ -676,9 +676,7 @@ Module.register("SmartMirror-Decision-Maker", {
 			}
 		});
 
-
-
-		if((self.flatRightDetected == false) && (self.MainMenuSelectedLast != -1)){
+		if((self.flatRightDetected == false) ){ //&& (self.MainMenuSelectedLast != -1)
 			MM.getModules().withClass("smartmirror-main-menu-center").enumerate(function(module) {
 					module.hide(1000, function() {Log.log(module.name + ' is hidden.');}, {lockString: "lockString"});
 					self.sendNotification('GESTURE_INTERACTION', 'menu_hide') //send this notification when user desires to close the main menu via gesture
