@@ -67,6 +67,25 @@ Module.register("SmartMirror-Decision-Maker", {
 
 	Debug_infos: {},
 
+	readingMode : false,
+	applicationsViewStates: [],
+	applicationClass: [
+		"clock",
+		"calendar", 
+		// "smartmirror-speechrecognition",
+		"MMM-cryptocurrency",
+		"weatherforecast",
+		"currentweather", 
+		"newsfeed",
+		"MMM-SimpleLogo", 
+		"MMM-PublicTransportHafas", 
+		"MMM-TomTomTraffic", 
+		"smartmirror-mensa-plan", 
+		"smartmirror-bivital", 
+		"MMM-SoccerLiveScore",
+		"MMM-News"
+	],
+
 	defaults: {
 	
 		ai_art_mirror: true,
@@ -88,6 +107,7 @@ Module.register("SmartMirror-Decision-Maker", {
 			{name : "smartmirror-center-display", words : ["centerdisplay"]},
 			{name : "smartmirror-bivital", words: ["bivital"]},
 			{name : "MMM-SoccerLiveScore", words: ["soccer"]},
+			{name : "MMM-News", words : ["news"]},
 			{name : "smartmirror-coffeebot", words : ["coffee","coffeebot"]},
 			{name : "SmartMirror-Decision-Maker", words : ["Decision_maker"]}
 		],
@@ -114,8 +134,11 @@ Module.register("SmartMirror-Decision-Maker", {
 					module.hide(0, function() {
 						Log.log('Module is hidden.');
 					}, {lockString: "lockString"});
-					self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: module.name, visibility: false});
+					setTimeout(()=>{self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: module.name, visibility: false});}, 500)
+				} else {
+					setTimeout(()=>{self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: "MMM-TomTomTraffic", visibility: true});}, 500)
 				}
+				
 			});
 		}else if(notification === 'TRANSCRIPT_EN') {
 			console.log("[" + this.name + "] " + "transcript received: " + payload);
@@ -230,13 +253,13 @@ Module.register("SmartMirror-Decision-Maker", {
 					if(user_config[key]) {
 						if (module.hidden){
 							module.show(1000, function() {Log.log(module.name + ' is shown.');},{lockString: "lockString"});
-							self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: module.name, visibility: true});
+							setTimeout(()=>{self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: module.name, visibility: true});}, 500)
 						}
 							
 					}else{
 						 if(!module.hidden){
 							module.hide(1000, function() {Log.log(module.name + ' is shown.');}, {lockString: "lockString"})
-							self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: module.name, visibility: false});
+							setTimeout(()=>{self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: module.name, visibility: false});}, 500)
 						}
 					}					
 					});
@@ -289,7 +312,9 @@ Module.register("SmartMirror-Decision-Maker", {
 			this.currentuserid = login_id;
 			console.log("[" + this.name + "] changing current user to: " + login_id );
 			this.sendNotification('USER_LOGIN', login_id);
-			this.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'smartmirror-ai-art-mirror', visibility: false});
+			this.readingMode = false
+			this.leaveReadingMode()
+			setTimeout(()=>{this.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'smartmirror-ai-art-mirror', visibility: false});}, 500)
 		}
 	},
 
@@ -420,7 +445,7 @@ Module.register("SmartMirror-Decision-Maker", {
 					this.sendNotification('CENTER_DISPLAY', 'STYLE_TRANSFERE');
 					this.aiartmirrorshown = ! this.aiartmirrorshown;
 					this.adjust_detection_fps();
-					this.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'smartmirror-ai-art-mirror', visibility: this.aiartmirrorshown});
+					setTimeout(()=>{this.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'smartmirror-ai-art-mirror', visibility: this.aiartmirrorshown});}, 500)
 				}else if(transcript.includes('randomsytle')) {
 					this.sendNotification('smartmirror-ai-art-mirror','RANDOM_STYLE');
 					this.aiartmirrorshown_random = ! this.aiartmirrorshown_random;
@@ -451,11 +476,11 @@ Module.register("SmartMirror-Decision-Maker", {
 							MM.getModules().withClass(element.name).enumerate(function(module) {
 								if (module.hidden) {
 									module.show(1000, function() {Log.log(module.name + ' is shown.');}, {lockString: "lockString"});
-									self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: module.name, visibility: true});
+									setTimeout(()=>{self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: module.name, visibility: true});}, 500)
 								}
 								else {
 									module.hide(1000, function() {Log.log(module.name + ' is shown.');}, {lockString: "lockString"});
-									self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: module.name, visibility: false});
+									setTimeout(()=>{self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: module.name, visibility: false});}, 500)
 								}
 								
 							});
@@ -483,11 +508,11 @@ Module.register("SmartMirror-Decision-Maker", {
 							MM.getModules().withClass(element.name).enumerate(function(module) {
 								if (module.hidden) {
 									module.show(1000, function() {Log.log(module.name + ' is shown.');}, {lockString: "lockString"});
-									self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: module.name, visibility: true});
+									setTimeout(()=>{self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: module.name, visibility: true});}, 500)
 								}
 								else {
 									module.hide(1000, function() {Log.log(module.name + ' is shown.');}, {lockString: "lockString"});
-									self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: module.name, visibility: false});
+									setTimeout(()=>{self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: module.name, visibility: false});}, 500)
 								}
 							});
 					});			
@@ -551,7 +576,7 @@ Module.register("SmartMirror-Decision-Maker", {
 					if (module.hidden){
 						module.show(1000, function() {Log.log(module.name + ' is shown.');}, {lockString: "lockString"});
 						self.sendNotification('GESTURE_INTERACTION', 'menu_show') //send this notification when user desires to open the main menu via gesture
-						self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: module.name, visibility: true});
+						setTimeout(()=>{self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: module.name, visibility: true});}, 500)
 					} 				
 
 				});
@@ -612,6 +637,35 @@ Module.register("SmartMirror-Decision-Maker", {
 					self.remove_everything_center_display();
 					self.sendNotification('GESTURE_INTERACTION', 'HIDEALL'); //send this notification when user desires to hide all camera options
 				}
+			}else if ((item["name"] === "okay_left")){
+				MM.getModules().withClass('MMM-News').enumerate(function(module) {
+					if(!module.hidden && self.currentuserid != -1 && self.readingMode === false) {
+						self.readingMode = undefined
+						setTimeout(() => {self.enterReadingMode();}, 1000);
+						setTimeout(() => {self.readingMode = true;}, 5000)
+					} else if (module.hidden && self.readingMode === true) {
+						self.readingMode = undefined
+						setTimeout(() => {self.restoreView(); self.leaveReadingMode();}, 1000);
+						setTimeout(() => {self.readingMode = false;}, 5000);
+					}
+				})
+			}else if ((item["name"] === "okay_right")){
+				MM.getModules().withClass('MMM-News').enumerate(function(module) {
+					if(!module.hidden && self.readingMode === false /*|| module.hidden && self.readingMode === true*/) {
+						self.readingMode = undefined
+						self.sendNotification('NEWS_NEXT')
+						self.sendNotification('GESTURE_INTERACTION', 'news_next')
+						setTimeout(()=> {self.readingMode = false}, 2000)
+					}
+				})
+			} else if ((item["name"] === "one_left")){
+				if(self.readingMode){
+					self.sendNotification('NEWS_DETAIL_SCROLLUP')
+				}
+			} else if ((item["name"] === "one_right")){
+				if(self.readingMode){
+					self.sendNotification('NEWS_DETAIL_SCROLLDOWN')
+				}
 			}
 		});
 
@@ -621,7 +675,7 @@ Module.register("SmartMirror-Decision-Maker", {
 			MM.getModules().withClass("smartmirror-main-menu-center").enumerate(function(module) {
 					module.hide(1000, function() {Log.log(module.name + ' is hidden.');}, {lockString: "lockString"});
 					self.sendNotification('GESTURE_INTERACTION', 'menu_hide') //send this notification when user desires to close the main menu via gesture
-					self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: module.name, visibility: false});
+					setTimeout(()=>{self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: module.name, visibility: false});}, 500)
 				});
 			self.MainMenuSelected = -1;
 			self.MainMenuSelectedLast = -1;
@@ -657,6 +711,37 @@ Module.register("SmartMirror-Decision-Maker", {
 		this.speechrec_aktiv = false;	
 	},
 
+	enterReadingMode: function(){
+		var self = this
+		Log.log("Entering reading mode")
+		self.sendNotification('GESTURE_INTERACTION', 'news_reading_mode_open')
+		MM.getModules().withClass(self.applicationClass).enumerate(function(module) {
+			self.applicationsViewStates.push({
+				name: module.name,
+				visibility: !module.hidden
+			})
+			module.hide(1000, function() {Log.log(module.name + ' is hidden.');}, {lockString: "lockString"});
+		});
+		self.sendNotification('NEWS_DETAIL', {})
+	},
+
+	restoreView: function(){
+		var self = this
+		Log.log("Leaving reading mode")
+		self.sendNotification('GESTURE_INTERACTION', 'news_reading_mode_close')
+		MM.getModules().withClass(self.applicationClass).enumerate(function(module) {
+			const item = self.applicationsViewStates.find(item => item.name == module.name)
+			if(item.visibility){
+				module.show(1000, function() {Log.log(module.name + ' is shown.');}, {lockString: "lockString"});
+			}
+		})
+	},
+
+	leaveReadingMode : function(){
+		self.sendNotification('NEWS_DETAIL_CLOSE', {})
+		self.applicationsViewStates = []
+	},
+
 	remove_everything_center_display: function(){
 		self = this;
 		self.sendNotification('CENTER_DISPLAY', 'HIDEALL');
@@ -687,7 +772,6 @@ Module.register("SmartMirror-Decision-Maker", {
 
 	start_idle_ai_mirror_art: function(){
 	 	if(this.currentuserid == -1) {
-			var self = this
 			if (this.aiartmirrorshown == false){
 				MM.getModules().withClass("smartmirror-center-display").enumerate(function(module) {
 					module.show(1000, function() {Log.log(module.name + ' is shown.');}, {lockString: "lockString"});
@@ -696,7 +780,7 @@ Module.register("SmartMirror-Decision-Maker", {
 				this.aiartmirrorshown = true;
 				this.adjust_detection_fps();
 				this.sendNotification("SHOW_ALERT", {type: "notification", message: "showing ai art as idle screen!"});
-				this.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'smartmirror-ai-art-mirror', visibility: this.aiartmirrorshown});
+				setTimeout(()=>{this.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'smartmirror-ai-art-mirror', visibility: this.aiartmirrorshown});}, 500)
 			}
 		} 
 	},
