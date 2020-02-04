@@ -89,6 +89,8 @@ Module.register("SmartMirror-Decision-Maker", {
 	defaults: {
 	
 		ai_art_mirror: true,
+
+		maxDetFPS: 20.0,
 	
 		module_list: [
 			{name : "clock", words : ["clock","uhr"]},
@@ -120,7 +122,8 @@ Module.register("SmartMirror-Decision-Maker", {
 		this.sendNotification('MAIN_MENU', 'menu');
 		this.mainManuState = this.mainManuStateObj.main;
 		console.log("[" + this.name + "] " + "sending MAIN_MENU: none");
-		this.sendSocketNotification('CONFIG', this.config);	
+		this.sendSocketNotification('CONFIG', this.config);
+		this.Debug_infos['max detection fps'] = this.config.maxDetFPS;
 		//config.language = "de";
 		//Translator.loadCoreTranslations(config.language);
 
@@ -139,6 +142,7 @@ Module.register("SmartMirror-Decision-Maker", {
 					setTimeout(()=>{self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: "MMM-TomTomTraffic", visibility: true});}, 500)
 				}
 				
+
 			});
 		}else if(notification === 'TRANSCRIPT_EN') {
 			console.log("[" + this.name + "] " + "transcript received: " + payload);
@@ -153,6 +157,9 @@ Module.register("SmartMirror-Decision-Maker", {
 			this.MainMenuItemsAmount = payload.length;
 		}else if(notification === 'CENTER_DISPLAY_FPS') {
 			this.Debug_infos['center display fps'] = payload;
+			this.updateDom();
+		}else if(notification === 'CAMERA_FPS') {
+			this.Debug_infos['camera fps'] = payload;
 			this.updateDom();
 		}else if(notification === 'FACE_DET_FPS') {
 			this.Debug_infos['face recognition fps'] = payload;
