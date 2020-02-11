@@ -90,7 +90,7 @@ Module.register("SmartMirror-Decision-Maker", {
 	
 		ai_art_mirror: true,
 
-		maxDetFPS: 20.0,
+		maxDetFPS: 25.0,
 	
 		module_list: [
 			{name : "clock", words : ["clock","uhr"]},
@@ -327,12 +327,12 @@ Module.register("SmartMirror-Decision-Maker", {
 
 	adjust_detection_fps: function(){
 		if (this.objectdetectionshown) {
-			this.sendNotification("smartmirror-object-detection" + "SetFPS", 25.0);
+			this.sendNotification("smartmirror-object-detection" + "SetFPS", this.config.maxDetFPS);
 		} else {
 			this.sendNotification("smartmirror-object-detection" + "SetFPS", 3.0)
 		}
 		if (this.gesturerecognitionshown) {
-			this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 25.0);
+			this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", this.config.maxDetFPS);
 		} else {
 			if (this.currentuserid == -1)
 				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 0.0);
@@ -340,7 +340,7 @@ Module.register("SmartMirror-Decision-Maker", {
 				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 8.0);
 		}
 		if (this.facerecognitionshown) {
-			this.sendNotification("smartmirror-facerecognition" + "SetFPS", 25.0);
+			this.sendNotification("smartmirror-facerecognition" + "SetFPS", this.config.maxDetFPS);
 		} else {
 			if (this.numberOfRecognisedPersons == 0)
 				this.sendNotification("smartmirror-facerecognition" + "SetFPS", 0.0);
@@ -353,7 +353,7 @@ Module.register("SmartMirror-Decision-Maker", {
 			if (this.numberOfRecognisedPersons == 0) {
 				this.sendNotification("smartmirror-ai-art-mirror_SetFPS", 10.0);
 			} else {
-				this.sendNotification("smartmirror-ai-art-mirror_SetFPS", 25.0);
+				this.sendNotification("smartmirror-ai-art-mirror_SetFPS", 30.0);
 			}
 		} else {
 			this.sendNotification("smartmirror-ai-art-mirror_SetFPS", 0.0);
@@ -583,7 +583,6 @@ Module.register("SmartMirror-Decision-Maker", {
 					if (module.hidden){
 						module.show(1000, function() {Log.log(module.name + ' is shown.');}, {lockString: "lockString"});
 						self.sendNotification('GESTURE_INTERACTION', 'menu_show') //send this notification when user desires to open the main menu via gesture
-						setTimeout(()=>{self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: module.name, visibility: true});}, 500)
 					} 				
 
 				});
@@ -603,6 +602,7 @@ Module.register("SmartMirror-Decision-Maker", {
 	
 					if(a < self.lastYOfFlatRight && self.lastYOfFlatRight < b ){
 						self.MainMenuSelected = i;
+						Log.log("MainMenuSelected ", self.MainMenuSelected) //alles außer -1
 					}
 				}
 				
@@ -676,17 +676,20 @@ Module.register("SmartMirror-Decision-Maker", {
 			}
 		});
 
-		if((self.flatRightDetected == false) ){ //&& (self.MainMenuSelectedLast != -1)
+		if((self.flatRightDetected == false)){ //&& (self.MainMenuSelectedLast != -1)
 			MM.getModules().withClass("smartmirror-main-menu-center").enumerate(function(module) {
-					module.hide(1000, function() {Log.log(module.name + ' is hidden.');}, {lockString: "lockString"});
-					self.sendNotification('GESTURE_INTERACTION', 'menu_hide') //send this notification when user desires to close the main menu via gesture
-					setTimeout(()=>{self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: module.name, visibility: false});}, 500)
+					if(!module.hidden){
+						module.hide(1000, function() {Log.log(module.name + ' is hidden.');}, {lockString: "lockString"});
+						self.sendNotification('GESTURE_INTERACTION', 'menu_hide') //send this notification when user desires to close the main menu via gesture
+
+						self.MainMenuSelected = -1;
+						self.MainMenuSelectedLast = -1;
+						self.MainMenuSelectedTime = 0;
+						self.sendNotification('MAIN_MENU', 'menu');
+						self.mainManuState = self.mainManuStateObj.main;
+					}
 				});
-			self.MainMenuSelected = -1;
-			self.MainMenuSelectedLast = -1;
-			self.MainMenuSelectedTime = 0;
-			this.sendNotification('MAIN_MENU', 'menu');
-			this.mainManuState = this.mainManuStateObj.main;
+			
 		}
 
 		if (self.MainMenuSelected != self.MainMenuSelectedLast){
