@@ -43,6 +43,7 @@ Module.register("SmartMirror-Decision-Maker", {
 
 	timeOfLastFlatRight : 0,
 	flatRightDetected : false,
+	lastTimeFlatRight: null,
 	lastXOfFlatRight : 0,
 	lastYOfFlatRight : 0,
 
@@ -588,6 +589,7 @@ Module.register("SmartMirror-Decision-Maker", {
 				});
 
 				self.flatRightDetected = true;
+				self.lastTimeFlatRight = new Date();
 				self.lastYOfFlatRight = item["center"][1]
 				self.lastXOfFlatRight = item["center"][0]
 
@@ -662,7 +664,7 @@ Module.register("SmartMirror-Decision-Maker", {
 						self.readingMode = undefined
 						self.sendNotification('NEWS_NEXT')
 						self.sendNotification('GESTURE_INTERACTION', 'news_next')
-						setTimeout(()=> {self.readingMode = false}, 2000)
+						setTimeout(()=> {self.readingMode = false}, 3000)
 					}
 				})
 			} else if ((item["name"] === "one_left")){
@@ -678,7 +680,7 @@ Module.register("SmartMirror-Decision-Maker", {
 
 		if((self.flatRightDetected == false)){ //&& (self.MainMenuSelectedLast != -1)
 			MM.getModules().withClass("smartmirror-main-menu-center").enumerate(function(module) {
-					if(!module.hidden){
+					if(!module.hidden && (new Date() - self.lastTimeFlatRight) > 1200){
 						module.hide(1000, function() {Log.log(module.name + ' is hidden.');}, {lockString: "lockString"});
 						self.sendNotification('GESTURE_INTERACTION', 'menu_hide') //send this notification when user desires to close the main menu via gesture
 
