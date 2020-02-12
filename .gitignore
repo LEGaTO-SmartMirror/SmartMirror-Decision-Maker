@@ -1,3 +1,5 @@
 #ignore pyc...
 *.pyc
 *.bak
+/node_modules
+package-lock.json

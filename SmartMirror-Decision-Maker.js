@@ -84,7 +84,8 @@ Module.register("SmartMirror-Decision-Maker", {
 		"smartmirror-mensa-plan", 
 		"smartmirror-bivital", 
 		"MMM-SoccerLiveScore",
-		"MMM-News"
+		"MMM-News",
+		"MMM-Canteen"
 	],
 
 	defaults: {
@@ -111,6 +112,7 @@ Module.register("SmartMirror-Decision-Maker", {
 			{name : "smartmirror-bivital", words: ["bivital"]},
 			{name : "MMM-SoccerLiveScore", words: ["soccer"]},
 			{name : "MMM-News", words : ["news"]},
+			{name : "MMM-Canteen", words : ["canteen"]},
 			{name : "smartmirror-coffeebot", words : ["coffee","coffeebot"]},
 			{name : "SmartMirror-Decision-Maker", words : ["Decision_maker"]}
 		],
