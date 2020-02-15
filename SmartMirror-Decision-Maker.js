@@ -113,6 +113,7 @@ Module.register("SmartMirror-Decision-Maker", {
 			{name : "MMM-SoccerLiveScore", words: ["soccer"]},
 			{name : "MMM-News", words : ["news"]},
 			{name : "MMM-Canteen", words : ["canteen"]},
+			{name : "MMM-Fuel", words : ["fuel", "gas"]},
 			{name : "smartmirror-coffeebot", words : ["coffee","coffeebot"]},
 			{name : "SmartMirror-Decision-Maker", words : ["Decision_maker"]}
 		],
@@ -322,8 +323,10 @@ Module.register("SmartMirror-Decision-Maker", {
 			this.currentuserid = login_id;
 			console.log("[" + this.name + "] changing current user to: " + login_id );
 			this.sendNotification('USER_LOGIN', login_id);
-			this.readingMode = false
-			this.leaveReadingMode()
+			if(this.readingMode){
+				this.readingMode = false
+				this.leaveReadingMode()
+			}
 			setTimeout(()=>{this.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'smartmirror-ai-art-mirror', visibility: false});}, 500)
 		}
 	},
@@ -669,14 +672,16 @@ Module.register("SmartMirror-Decision-Maker", {
 						setTimeout(()=> {self.readingMode = false}, 3000)
 					}
 				})
-			} else if ((item["name"] === "one_left")){
+			}else if ((item["name"] === "one_left")){
 				if(self.readingMode){
 					self.sendNotification('NEWS_DETAIL_SCROLLUP')
 				}
-			} else if ((item["name"] === "one_right")){
+			}else if ((item["name"] === "one_right")){
 				if(self.readingMode){
 					self.sendNotification('NEWS_DETAIL_SCROLLDOWN')
 				}
+			}else if ((item["name"] === "two_right")){
+				self.sendNotification('SHOW_FUEL_MAP')
 			}
 		});
 
