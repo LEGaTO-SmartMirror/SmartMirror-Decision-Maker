@@ -680,8 +680,6 @@ Module.register("SmartMirror-Decision-Maker", {
 				if(self.readingMode){
 					self.sendNotification('NEWS_DETAIL_SCROLLDOWN')
 				}
-			}else if ((item["name"] === "two_right")){
-				self.sendNotification('SHOW_FUEL_MAP')
 			}
 		});
 
