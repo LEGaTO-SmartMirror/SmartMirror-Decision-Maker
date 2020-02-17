@@ -114,6 +114,8 @@ Module.register("SmartMirror-Decision-Maker", {
 			{name : "MMM-News", words : ["news"]},
 			{name : "MMM-Canteen", words : ["canteen"]},
 			{name : "MMM-Fuel", words : ["fuel", "gas"]},
+			{name : "MMM-DailyDilbert", words : ["comic"]},
+			{name : "MMM-Liquipedia-Dota2", words : ["esports", "dota2"]},
 			{name : "smartmirror-coffeebot", words : ["coffee","coffeebot"]},
 			{name : "SmartMirror-Decision-Maker", words : ["Decision_maker"]}
 		],
