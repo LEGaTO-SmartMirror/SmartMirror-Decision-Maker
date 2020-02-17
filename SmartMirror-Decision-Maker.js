@@ -744,7 +744,6 @@ Module.register("SmartMirror-Decision-Maker", {
 	// this function checks if a certain gesture has been performed over a period of time. timeMemory has to be property of SmartMirror-Decision-Maker class
 	// usage if(check_for_gesture_validity(this.newsNextLastTime, 2, 3))
 	check_for_gesture_validity: function(timeMemory, minTime = 2, maxTime = 3){
-		Log.log("Timememory", timeMemory)
 		const d = new Date()
 		if(timeMemory.timestamp === undefined){
 			timeMemory.timestamp = d
@@ -757,7 +756,6 @@ Module.register("SmartMirror-Decision-Maker", {
 				timeMemory.timestamp = d
 			}
 		}
-		Log.log("Timememory set", timeMemory)
 		return false
 	},
 
