@@ -19,7 +19,10 @@ Module.register("SmartMirror-Decision-Maker", {
 		smarthome:5,
 		coffee:6,
 		preferences:7,
-		user_settings:8
+		user_settings:8,
+		utilities:9,
+		campus:10,
+		entertainment:11
 	},
 
 	mainManuState: 0,
@@ -85,7 +88,10 @@ Module.register("SmartMirror-Decision-Maker", {
 		"smartmirror-bivital", 
 		"MMM-SoccerLiveScore",
 		"MMM-News",
-		"MMM-Canteen"
+		"MMM-Canteen",
+		"MMM-Liquipedia-Dota2",
+		"MMM-DailyDilbert",
+		"MMM-Fuel"
 	],
 
 	defaults: {
@@ -391,6 +397,15 @@ Module.register("SmartMirror-Decision-Maker", {
 				}else if(transcript.includes('application')||transcript.includes('anwendung')){				
 					this.sendNotification('MAIN_MENU', 'application');
 					this.mainManuState = this.mainManuStateObj.application;
+				}else if(transcript.includes('utilities')||transcript.includes('nützliches')){				
+					this.sendNotification('MAIN_MENU', 'utilities');
+					this.mainManuState = this.mainManuStateObj.utilities;
+				}else if(transcript.includes('campus')||transcript.includes('kampus')){				
+					this.sendNotification('MAIN_MENU', 'campus');
+					this.mainManuState = this.mainManuStateObj.campus;
+				}else if(transcript.includes('entertainment')||transcript.includes('unterhaltung')){				
+					this.sendNotification('MAIN_MENU', 'entertainment');
+					this.mainManuState = this.mainManuStateObj.entertainment;
 				}else if(transcript.includes('smarthome')){				
 					this.sendNotification('MAIN_MENU', 'smarthome');
 					this.mainManuState = this.mainManuStateObj.smarthome;
@@ -477,7 +492,7 @@ Module.register("SmartMirror-Decision-Maker", {
 					this.sendNotification('MAIN_MENU', 'menu');
 					this.mainManuState = this.mainManuStateObj.main;
 				}
-			}else if(this.mainManuState === this.mainManuStateObj.application){
+			}else if(this.mainManuState === this.mainManuStateObj.utilities || this.mainManuState === this.mainManuStateObj.campus || this.mainManuState === this.mainManuStateObj.entertainment){
 				if(transcript.includes('back')||transcript.includes('zurück')){				
 					this.sendNotification('MAIN_MENU', 'menu');
 					this.mainManuState = this.mainManuStateObj.main;
