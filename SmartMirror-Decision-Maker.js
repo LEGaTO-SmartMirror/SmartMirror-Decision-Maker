@@ -69,6 +69,10 @@ Module.register("SmartMirror-Decision-Maker", {
 	MainMenuItemSize: 0.0375,
 	MainMenuSelectedTime: 0,
 
+	newsNextLastTime: {timestamp: undefined},
+	newsDetailLastTime: {timestamp: undefined},
+	mainMenuShowLastTime: {timestamp: undefined},
+
 	Debug_infos: {},
 
 	readingMode : false,
@@ -602,34 +606,33 @@ Module.register("SmartMirror-Decision-Maker", {
 
 		gestures_list.forEach(function (item) {		
 			if (item["name"] === "flat_right"){
+				self.flatRightDetected = true;
+
 				MM.getModules().withClass("smartmirror-main-menu-center").enumerate(function(module) {
-					if (module.hidden){
+					if (module.hidden && self.check_for_gesture_validity(self.mainMenuShowLastTime, 0.2, 0.4)){
 						module.show(1000, function() {Log.log(module.name + ' is shown.');}, {lockString: "lockString"});
 						self.sendNotification('GESTURE_INTERACTION', 'menu_show') //send this notification when user desires to open the main menu via gesture
-					} 				
+					}else if(!module.hidden){
+						self.lastTimeFlatRight = new Date();
+						self.lastYOfFlatRight = item["center"][1]
+						self.lastXOfFlatRight = item["center"][0]
 
-				});
+						var offset = 0.5 - (self.MainMenuItemSize * (self.MainMenuItemsAmount/2)) - 0.02;
 
-				self.flatRightDetected = true;
-				self.lastTimeFlatRight = new Date();
-				self.lastYOfFlatRight = item["center"][1]
-				self.lastXOfFlatRight = item["center"][0]
+						self.MainMenuSelected = -1;
 
-				var offset = 0.5 - (self.MainMenuItemSize * (self.MainMenuItemsAmount/2)) - 0.02;
-
-				self.MainMenuSelected = -1;
-
-				var i;
-				for( i = 0; i < self.MainMenuItemsAmount; i ++){
-					var a = (offset + i * self.MainMenuItemSize);
-					var b = (offset + (i+1) * self.MainMenuItemSize)
-	
-					if(a < self.lastYOfFlatRight && self.lastYOfFlatRight < b ){
-						self.MainMenuSelected = i;
-						Log.log("MainMenuSelected ", self.MainMenuSelected) //alles außer -1
+						var i;
+						for( i = 0; i < self.MainMenuItemsAmount; i ++){
+							var a = (offset + i * self.MainMenuItemSize);
+							var b = (offset + (i+1) * self.MainMenuItemSize)
+			
+							if(a < self.lastYOfFlatRight && self.lastYOfFlatRight < b ){
+								self.MainMenuSelected = i;
+								Log.log("MainMenuSelected ", self.MainMenuSelected) //alles außer -1
+							}
+						}
 					}
-				}
-				
+				});
 			}else if (item["name"] === "thumbs_up_right"){
 				
 				if ((self.facerecognitionshown === false) || (self.objectdetectionshown === false) || (self.gesturerecognitionshown === false )) {
@@ -670,23 +673,23 @@ Module.register("SmartMirror-Decision-Maker", {
 				}
 			}else if ((item["name"] === "okay_left")){
 				MM.getModules().withClass('MMM-News').enumerate(function(module) {
-					if(!module.hidden && self.currentuserid != -1 && self.readingMode === false) {
-						self.readingMode = undefined
-						setTimeout(() => {self.enterReadingMode();}, 1000);
-						setTimeout(() => {self.readingMode = true;}, 5000)
-					} else if (module.hidden && self.readingMode === true) {
-						self.readingMode = undefined
-						setTimeout(() => {self.restoreView(); self.leaveReadingMode();}, 1000);
-						setTimeout(() => {self.readingMode = false;}, 5000);
+					if(!module.hidden && self.currentuserid != -1 && self.readingMode === false && self.check_for_gesture_validity(self.newsDetailLastTime)) {
+						self.readingMode = undefined;
+						self.enterReadingMode();
+						setTimeout(() => {self.readingMode = true;}, 1000);
+						
+					} else if (module.hidden && self.readingMode === true && self.check_for_gesture_validity(self.newsDetailLastTime)) {
+						self.readingMode = undefined;
+						self.restoreView();
+						self.leaveReadingMode();
+						setTimeout(() => {self.readingMode = false;}, 1000);						
 					}
 				})
 			}else if ((item["name"] === "okay_right")){
 				MM.getModules().withClass('MMM-News').enumerate(function(module) {
-					if(!module.hidden && self.readingMode === false /*|| module.hidden && self.readingMode === true*/) {
-						self.readingMode = undefined
+					if(!module.hidden && self.readingMode === false && self.check_for_gesture_validity(self.newsNextLastTime)) {
 						self.sendNotification('NEWS_NEXT')
 						self.sendNotification('GESTURE_INTERACTION', 'news_next')
-						setTimeout(()=> {self.readingMode = false}, 3000)
 					}
 				})
 			}else if ((item["name"] === "one_left")){
@@ -736,6 +739,26 @@ Module.register("SmartMirror-Decision-Maker", {
 			self.sendNotification('MAIN_MENU_SELECT', self.MainMenuSelected);
 		}
 		console.log("[" + self.name + "] item changed.." );
+	},
+
+	// this function checks if a certain gesture has been performed over a period of time. timeMemory has to be property of SmartMirror-Decision-Maker class
+	// usage if(check_for_gesture_validity(this.newsNextLastTime, 2, 3))
+	check_for_gesture_validity: function(timeMemory, minTime = 2, maxTime = 3){
+		Log.log("Timememory", timeMemory)
+		const d = new Date()
+		if(timeMemory.timestamp === undefined){
+			timeMemory.timestamp = d
+		}else {
+			var diffSeconds = (d - timeMemory.timestamp) / 1000
+			if(diffSeconds > minTime && diffSeconds < maxTime){
+				timeMemory.timestamp = undefined
+				return true
+			} else if (diffSeconds > 3){
+				timeMemory.timestamp = d
+			}
+		}
+		Log.log("Timememory set", timeMemory)
+		return false
 	},
 
 	disable_speechrec: function(){
