@@ -726,7 +726,17 @@ Module.register("SmartMirror-Decision-Maker", {
 			self.MainMenuSelectedTime  = d.getTime();
 		}
 		
-		self.MainMenuSelectedLast = self.MainMenuSelected;		
+		self.MainMenuSelectedLast = self.MainMenuSelected;
+
+		if ((gestures_list.filter(function(left_two) { return left_two.name === 'two_left'; }).length > 0) &&
+		   (gestures_list.filter(function(right_two) { return right_two.name === 'two_right'; }).length > 0)) {
+			var d = new Date();
+			if((d.getTime() - 15000) > self.timeOFLastPicture){ 
+  				//self.sendNotification("SHOW_ALERT", {type: "notification", message: "taking a picture"});
+				self.sendNotification('TAKE_SELFY', "ART");
+				self.timeOFLastPicture = d.getTime();
+			}
+		}
 	},
 
 	check_for_menu_click:function(select_time, item){
