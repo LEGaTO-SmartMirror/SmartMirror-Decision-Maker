@@ -733,7 +733,7 @@ Module.register("SmartMirror-Decision-Maker", {
 			var d = new Date();
 			if((d.getTime() - 15000) > self.timeOFLastPicture){ 
   				//self.sendNotification("SHOW_ALERT", {type: "notification", message: "taking a picture"});
-				self.sendNotification('TAKE_SELFY', "ART");
+				self.sendNotification('TAKE_SELFIE', "ART");
 				self.timeOFLastPicture = d.getTime();
 			}
 		}
