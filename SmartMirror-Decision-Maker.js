@@ -72,6 +72,14 @@ Module.register("SmartMirror-Decision-Maker", {
 	newsNextLastTime: {timestamp: undefined},
 	newsDetailLastTime: {timestamp: undefined},
 	mainMenuShowLastTime: {timestamp: undefined},
+	mainMenuHideLastTime: {timestamp: undefined},
+	showAllLastTime: {timestamp: undefined},
+	hideAllLastTime : {timestamp: undefined},
+	aiArtLastTime: {timestamp: undefined},
+	userLoginChangeLastTime: {timestamp: undefined},
+	printLastTime: {timestamp: undefined},
+	newsScrollUpLastTime: {timestamp: undefined},
+	newsScrollDownLastTime: {timestamp: undefined},
 
 	Debug_infos: {},
 
@@ -330,6 +338,7 @@ Module.register("SmartMirror-Decision-Maker", {
 			}
 		} 
 
+
 		if (login_id != this.currentuserid){
 			this.sendSocketNotification('LOGGIN_USER', login_id);
 			this.currentuserid = login_id;
@@ -453,7 +462,6 @@ Module.register("SmartMirror-Decision-Maker", {
 				}else if(transcript.includes('person')||transcript.includes('person')){
 					this.sendNotification('CENTER_DISPLAY', 'PERSON');
 					this.personrecognitionshown = !(this.personrecognitionshown);
-					setTimeout(() => {this.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'SmartMirror-Person-Recognition', visibility: this.personrecognitionshown});}, 500)
 				}else if(transcript.includes('hide all')||transcript.includes('HIDEALL')||transcript.includes('versteck alles')||transcript.includes('remove all')){
 					self.remove_everything_center_display();
 						
@@ -469,7 +477,7 @@ Module.register("SmartMirror-Decision-Maker", {
 					setTimeout(() => {this.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'SmartMirror-Object-Detection', visibility: this.objectdetectionshown});}, 500)
 					setTimeout(() => {this.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'SmartMirror-Gesture-Recognition', visibility: this.gesturerecognitionshown});}, 500)
 					setTimeout(() => {this.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'smartmirror-camera-image', visibility: this.cameraimageshown});}, 500)
-					setTimeout(() => {this.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'SmartMirror-Person-Recognition', visibility: this.personrecognitionshown});}, 500)	
+					setTimeout(() => {this.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'SmartMirror-Person-Recognition', visibility: true});}, 500)	
 				}
 			}else if(this.mainManuState === this.mainManuStateObj.augmentations){
 				if(transcript.includes('back')||transcript.includes('zurück')){		
@@ -609,7 +617,7 @@ Module.register("SmartMirror-Decision-Maker", {
 				self.flatRightDetected = true;
 
 				MM.getModules().withClass("smartmirror-main-menu-center").enumerate(function(module) {
-					if (module.hidden && self.check_for_gesture_validity(self.mainMenuShowLastTime, 0.2, 0.4)){
+					if (module.hidden && self.check_for_validity(self.mainMenuShowLastTime, 0.2, 0.4)){
 						module.show(1000, function() {Log.log(module.name + ' is shown.');}, {lockString: "lockString"});
 						self.sendNotification('GESTURE_INTERACTION', 'menu_show') //send this notification when user desires to open the main menu via gesture
 					}else if(!module.hidden){
@@ -635,7 +643,7 @@ Module.register("SmartMirror-Decision-Maker", {
 				});
 			}else if (item["name"] === "thumbs_up_right"){
 				
-				if ((self.facerecognitionshown === false) || (self.objectdetectionshown === false) || (self.gesturerecognitionshown === false )) {
+				if (((self.facerecognitionshown === false) || (self.objectdetectionshown === false) || (self.gesturerecognitionshown === false )) && self.check_for_validity(self.showAllLastTime, 0.8, 1.2)) {
 					if(self.aiartmirrorshown){
 						self.sendNotification('CENTER_DISPLAY', 'STYLE_TRANSFERE');
 						self.aiartmirrorshown = false;
@@ -653,12 +661,12 @@ Module.register("SmartMirror-Decision-Maker", {
 					setTimeout(() => {self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'SmartMirror-Object-Detection', visibility: self.objectdetectionshown});}, 500)
 					setTimeout(() => {self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'SmartMirror-Gesture-Recognition', visibility: self.gesturerecognitionshown});}, 500)
 					setTimeout(() => {self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'smartmirror-camera-image', visibility: self.cameraimageshown});}, 500)
-					setTimeout(() => {self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'SmartMirror-Person-Recognition', visibility: self.personrecognitionshown});}, 500)
+					setTimeout(() => {self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'SmartMirror-Person-Recognition', visibility: true});}, 500)
 					
 					self.adjust_detection_fps();
 				}
 			}else if (item["name"] === "thumbs_up_left"){
-				if (self.aiartmirrorshown === false) {
+				if (self.aiartmirrorshown === false && self.check_for_validity(self.aiArtLastTime, 0.8, 1.2)) {
 					self.remove_everything_center_display();
 					self.sendNotification('CENTER_DISPLAY', 'STYLE_TRANSFERE');
 					self.sendNotification('GESTURE_INTERACTION', 'STYLE_TRANSFERE'); //send this notification when user desires to turn air art on
@@ -666,19 +674,19 @@ Module.register("SmartMirror-Decision-Maker", {
 					self.adjust_detection_fps();
 					self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'smartmirror-ai-art-mirror', visibility: this.aiartmirrorshown});
 				}
-			}else if ((item["name"] === "thumbs_down_left") || (item["name"] === "thumbs_down_right")){
+			}else if (((item["name"] === "thumbs_down_left") || (item["name"] === "thumbs_down_right")) && self.check_for_validity(self.hideAllLastTime, 0.5, 0.8)){
 				if(self.facerecognitionshown || self.objectdetectionshown || self.gesturerecognitionshown || self.personrecognitionshown || self.aiartmirrorshown ){
 					self.remove_everything_center_display();
 					self.sendNotification('GESTURE_INTERACTION', 'HIDEALL'); //send this notification when user desires to hide all camera options
 				}
 			}else if ((item["name"] === "okay_left")){
 				MM.getModules().withClass('MMM-News').enumerate(function(module) {
-					if(!module.hidden && self.currentuserid != -1 && self.readingMode === false && self.check_for_gesture_validity(self.newsDetailLastTime)) {
+					if(!module.hidden && self.currentuserid != -1 && self.readingMode === false && self.check_for_validity(self.newsDetailLastTime)) {
 						self.readingMode = undefined;
 						self.enterReadingMode();
 						setTimeout(() => {self.readingMode = true;}, 1000);
 						
-					} else if (module.hidden && self.readingMode === true && self.check_for_gesture_validity(self.newsDetailLastTime)) {
+					} else if (module.hidden && self.readingMode === true && self.check_for_validity(self.newsDetailLastTime)) {
 						self.readingMode = undefined;
 						self.restoreView();
 						self.leaveReadingMode();
@@ -687,17 +695,17 @@ Module.register("SmartMirror-Decision-Maker", {
 				})
 			}else if ((item["name"] === "okay_right")){
 				MM.getModules().withClass('MMM-News').enumerate(function(module) {
-					if(!module.hidden && self.readingMode === false && self.check_for_gesture_validity(self.newsNextLastTime)) {
+					if(!module.hidden && self.readingMode === false && self.check_for_validity(self.newsNextLastTime)) {
 						self.sendNotification('NEWS_NEXT')
 						self.sendNotification('GESTURE_INTERACTION', 'news_next')
 					}
 				})
 			}else if ((item["name"] === "one_left")){
-				if(self.readingMode){
+				if(self.readingMode && self.check_for_validity(self.newsScrollUpLastTime)){
 					self.sendNotification('NEWS_DETAIL_SCROLLUP')
 				}
 			}else if ((item["name"] === "one_right")){
-				if(self.readingMode){
+				if(self.readingMode && self.check_for_validity(self.newsScrollDownLastTime)){
 					self.sendNotification('NEWS_DETAIL_SCROLLDOWN')
 				}
 			}
@@ -705,7 +713,7 @@ Module.register("SmartMirror-Decision-Maker", {
 
 		if((self.flatRightDetected == false)){ //&& (self.MainMenuSelectedLast != -1)
 			MM.getModules().withClass("smartmirror-main-menu-center").enumerate(function(module) {
-					if(!module.hidden && (new Date() - self.lastTimeFlatRight) > 1200){
+					if(!module.hidden && self.check_for_validity(self.mainMenuHideLastTime, 1, 1.5)){
 						module.hide(1000, function() {Log.log(module.name + ' is hidden.');}, {lockString: "lockString"});
 						self.sendNotification('GESTURE_INTERACTION', 'menu_hide') //send this notification when user desires to close the main menu via gesture
 
@@ -729,14 +737,23 @@ Module.register("SmartMirror-Decision-Maker", {
 		self.MainMenuSelectedLast = self.MainMenuSelected;
 
 		if ((gestures_list.filter(function(left_two) { return left_two.name === 'two_left'; }).length > 0) &&
-		   (gestures_list.filter(function(right_two) { return right_two.name === 'two_right'; }).length > 0)) {
+		   (gestures_list.filter(function(right_two) { return right_two.name === 'two_right'; }).length > 0) && 
+		   self.check_for_validity(self.printLastTime)) {
 			var d = new Date();
 			if((d.getTime() - 15000) > self.timeOFLastPicture){ 
   				//self.sendNotification("SHOW_ALERT", {type: "notification", message: "taking a picture"});
 				self.sendNotification('TAKE_SELFIE', "ART");
 				self.timeOFLastPicture = d.getTime();
+				if (this.aiartmirrorshown_random == true){
+					this.sendNotification('smartmirror-ai-art-mirror','RANDOM_STYLE');
+					setTimeout(() => {self.ai_art_randomize_again();}, 15000);
+				}
 			}
 		}
+	},
+
+	ai_art_randomize_again:function(){
+		this.sendNotification('smartmirror-ai-art-mirror','RANDOM_STYLE');
 	},
 
 	check_for_menu_click:function(select_time, item){
@@ -752,8 +769,8 @@ Module.register("SmartMirror-Decision-Maker", {
 	},
 
 	// this function checks if a certain gesture has been performed over a period of time. timeMemory has to be property of SmartMirror-Decision-Maker class
-	// usage if(check_for_gesture_validity(this.newsNextLastTime, 2, 3))
-	check_for_gesture_validity: function(timeMemory, minTime = 2, maxTime = 3){
+	// usage if(check_for_validity(this.newsNextLastTime, 2, 3))
+	check_for_validity: function(timeMemory, minTime = 2, maxTime = 3){
 		const d = new Date()
 		if(timeMemory.timestamp === undefined){
 			timeMemory.timestamp = d
@@ -762,7 +779,7 @@ Module.register("SmartMirror-Decision-Maker", {
 			if(diffSeconds > minTime && diffSeconds < maxTime){
 				timeMemory.timestamp = undefined
 				return true
-			} else if (diffSeconds > 3){
+			} else if (diffSeconds > maxTime){
 				timeMemory.timestamp = d
 			}
 		}
@@ -820,7 +837,7 @@ Module.register("SmartMirror-Decision-Maker", {
 		setTimeout(() => {self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'SmartMirror-Gesture-Recognition', visibility: self.gesturerecognitionshown});}, 500)
 		setTimeout(() => {self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'smartmirror-camera-image', visibility: self.cameraimageshown});}, 500)
 		setTimeout(() => {self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'SmartMirror-Short-Distance', visibility: false});}, 500)
-		setTimeout(() => {self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'SmartMirror-Person-Recognition', visibility: self.personrecognitionshown});}, 500)
+		setTimeout(() => {self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'SmartMirror-Person-Recognition', visibility: false});}, 500)
 		setTimeout(() => {self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'smartmirror-ai-art-mirror', visibility: self.aiartmirrorshown});}, 500)
 	},
 
