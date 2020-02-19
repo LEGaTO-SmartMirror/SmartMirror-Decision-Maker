@@ -643,7 +643,7 @@ Module.register("SmartMirror-Decision-Maker", {
 				});
 			}else if (item["name"] === "thumbs_up_right"){
 				
-				if (((self.facerecognitionshown === false) || (self.objectdetectionshown === false) || (self.gesturerecognitionshown === false )) && self.check_for_validity(self.showAllLastTime, 0.8, 1.2)) {
+				if (((self.facerecognitionshown === false) || (self.objectdetectionshown === false) || (self.gesturerecognitionshown === false )) && self.check_for_validity(self.showAllLastTime, 0.5, 1.2)) {
 					if(self.aiartmirrorshown){
 						self.sendNotification('CENTER_DISPLAY', 'STYLE_TRANSFERE');
 						self.aiartmirrorshown = false;
@@ -666,7 +666,7 @@ Module.register("SmartMirror-Decision-Maker", {
 					self.adjust_detection_fps();
 				}
 			}else if (item["name"] === "thumbs_up_left"){
-				if (self.aiartmirrorshown === false && self.check_for_validity(self.aiArtLastTime, 0.8, 1.2)) {
+				if (self.aiartmirrorshown === false && self.check_for_validity(self.aiArtLastTime, 0.5, 1.2)) {
 					self.remove_everything_center_display();
 					self.sendNotification('CENTER_DISPLAY', 'STYLE_TRANSFERE');
 					self.sendNotification('GESTURE_INTERACTION', 'STYLE_TRANSFERE'); //send this notification when user desires to turn air art on
@@ -730,7 +730,7 @@ Module.register("SmartMirror-Decision-Maker", {
 		if (self.MainMenuSelected != self.MainMenuSelectedLast){
 			console.log("[" + self.name + "] menu select item  " + self.MainMenuSelected );
 			self.sendNotification('MAIN_MENU_SELECT', self.MainMenuSelected);
-			setTimeout(() => {self.check_for_menu_click(d.getTime(),self.MainMenuSelected);}, 3000);
+			setTimeout(() => {self.check_for_menu_click(d.getTime(),self.MainMenuSelected);}, 2500);
 			self.MainMenuSelectedTime  = d.getTime();
 		}
 		
@@ -738,7 +738,7 @@ Module.register("SmartMirror-Decision-Maker", {
 
 		if ((gestures_list.filter(function(left_two) { return left_two.name === 'two_left'; }).length > 0) &&
 		   (gestures_list.filter(function(right_two) { return right_two.name === 'two_right'; }).length > 0) && 
-		   self.check_for_validity(self.printLastTime)) {
+		   self.check_for_validity(self.printLastTime, 1, 1.5)) {
 			var d = new Date();
 			if((d.getTime() - 15000) > self.timeOFLastPicture){ 
   				//self.sendNotification("SHOW_ALERT", {type: "notification", message: "taking a picture"});
