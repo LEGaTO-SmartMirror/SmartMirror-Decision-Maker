@@ -459,7 +459,7 @@ Module.register("SmartMirror-Decision-Maker", {
 						self.sendNotification('MAIN_MENU', 'preferences');
 						self.mainManuState = self.mainManuStateObj.preferences;
 					}
-
+					return;
 				case self.mainManuStateObj.camera: // switch (self.mainManuState)
 					if(transcript.includes('back')||transcript.includes('zurück')){				
 						self.sendNotification('MAIN_MENU', 'menu');
@@ -512,6 +512,7 @@ Module.register("SmartMirror-Decision-Maker", {
 						setTimeout(() => {self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'smartmirror-camera-image', visibility: self.cameraimageshown});}, 500)
 						setTimeout(() => {self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'SmartMirror-Person-Recognition', visibility: true});}, 500)	
 					}
+					return;
 				case self.mainManuStateObj.augmentations: // switch (self.mainManuState)
 					if(transcript.includes('back')||transcript.includes('zurück')){		
 						self.sendNotification('MAIN_MENU', 'menu');
@@ -532,6 +533,7 @@ Module.register("SmartMirror-Decision-Maker", {
 						self.sendNotification('smartmirror-ai-art-mirror','DISP_SOURCE');
 	
 					}
+					return;
 				case self.mainManuStateObj.utilities: // switch (self.mainManuState)
 				case self.mainManuStateObj.campus: // switch (self.mainManuState)
 				case self.mainManuStateObj.entertainment: // switch (self.mainManuState)
@@ -557,7 +559,8 @@ Module.register("SmartMirror-Decision-Maker", {
 								
 							});
 						});
-					}		
+					}	
+					return;	
 				case self.mainManuStateObj.smarthome: // switch (self.mainManuState)
 					if(transcript.includes('back')||transcript.includes('zurück')){				
 						self.sendNotification('MAIN_MENU', 'menu');
@@ -566,6 +569,7 @@ Module.register("SmartMirror-Decision-Maker", {
 						self.sendNotification('MAIN_MENU', 'coffee');
 						self.mainManuState = self.mainManuStateObj.coffee;
 					}
+					return;
 				case self.mainManuStateObj.coffee: // switch (self.mainManuState)
 					if(transcript.includes('back')||transcript.includes('zurück')){				
 						self.sendNotification('MAIN_MENU', 'smarthome');
@@ -611,7 +615,7 @@ Module.register("SmartMirror-Decision-Maker", {
 							self.sendNotification('smartmirror-TTS-ger',"Dein Kaffe ist noch nicht durch!");
 						}
 					}
-	
+					return;
 				case self.mainManuStateObj.preferences: // switch (self.mainManuState)
 					if(transcript.includes('back')||transcript.includes('zurück')){				
 						self.sendNotification('MAIN_MENU', 'menu');
@@ -620,11 +624,13 @@ Module.register("SmartMirror-Decision-Maker", {
 						self.sendNotification('MAIN_MENU', 'user_settings');
 						self.mainManuState = self.mainManuStateObj.user_settings;
 					}
+					return;
 				case self.mainManuStateObj.user_settings: // switch (self.mainManuState)
 					if(transcript.includes('back')||transcript.includes('zurück')){				
 						self.sendNotification('MAIN_MENU', 'menu');
 						self.mainManuState = self.mainManuStateObj.preferences;
 					}
+					return;
 			}
 		}
 	},
