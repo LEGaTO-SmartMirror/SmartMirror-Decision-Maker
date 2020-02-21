@@ -390,7 +390,7 @@ Module.register("SmartMirror-Decision-Maker", {
 			if (this.currentuserid == -1)
 				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 0.0);
 			else
-				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 8.0);
+				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 10.0);
 		}
 		if (this.facerecognitionshown) {
 			this.sendNotification("smartmirror-facerecognition" + "SetFPS", this.config.maxDetFPS);
