@@ -382,7 +382,7 @@ Module.register("SmartMirror-Decision-Maker", {
 		if (this.objectdetectionshown) {
 			this.sendNotification("smartmirror-object-detection" + "SetFPS", this.config.maxDetFPS);
 		} else {
-			this.sendNotification("smartmirror-object-detection" + "SetFPS", 3.0)
+			this.sendNotification("smartmirror-object-detection" + "SetFPS", 4.0)
 		}
 		if (this.gesturerecognitionshown) {
 			this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", this.config.maxDetFPS);
@@ -397,10 +397,8 @@ Module.register("SmartMirror-Decision-Maker", {
 		} else {
 			if (this.numberOfRecognisedPersons == 0)
 				this.sendNotification("smartmirror-facerecognition" + "SetFPS", 0.0);
-			else if (this.currentuserid < 1)
-				this.sendNotification("smartmirror-facerecognition" + "SetFPS", 3.0);
 			else
-				this.sendNotification("smartmirror-facerecognition" + "SetFPS", 2.0);
+				this.sendNotification("smartmirror-facerecognition" + "SetFPS", 4.0);
 		}
 		if (this.aiartmirrorshown) {
 			if (this.numberOfRecognisedPersons == 0) {
