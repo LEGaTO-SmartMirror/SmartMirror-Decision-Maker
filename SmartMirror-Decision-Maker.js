@@ -651,7 +651,7 @@ Module.register("SmartMirror-Decision-Maker", {
 					self.flatRightDetected = true;
 
 					MM.getModules().withClass("smartmirror-main-menu-center").enumerate(function(module) {
-						if (module.hidden && self.check_for_validity(self.mainMenuShowLastTime, 0.2, 0.4)){
+						if (module.hidden && self.check_for_validity(self.mainMenuShowLastTime, 0.2, 1.4)){
 							module.show(1000, function() {Log.log(module.name + ' is shown.');}, {lockString: "lockString"});
 							self.sendNotification('GESTURE_INTERACTION', 'menu_show') //send this notification when user desires to open the main menu via gesture
 						}else if(!module.hidden){
@@ -679,7 +679,7 @@ Module.register("SmartMirror-Decision-Maker", {
 				case "thumbs_up_right":
 				
 					if (((self.facerecognitionshown === false) || (self.objectdetectionshown === false) || (self.gesturerecognitionshown === false )) 
-					&& self.check_for_validity(self.showAllLastTime, 0.5, 1.2)) {
+					&& self.check_for_validity(self.showAllLastTime, 0.5, 2.5)) {
 						if(self.aiartmirrorshown){
 							self.sendNotification('CENTER_DISPLAY', 'STYLE_TRANSFERE');
 							self.aiartmirrorshown = false;
@@ -703,7 +703,7 @@ Module.register("SmartMirror-Decision-Maker", {
 					}
 					break;
 				case "thumbs_up_left":
-					if (self.aiartmirrorshown === false && self.check_for_validity(self.aiArtLastTime, 0.5, 1.2)) {
+					if (self.aiartmirrorshown === false && self.check_for_validity(self.aiArtLastTime, 0.5, 1.5)) {
 						self.remove_everything_center_display();
 						self.sendNotification('CENTER_DISPLAY', 'STYLE_TRANSFERE');
 						self.sendNotification('GESTURE_INTERACTION', 'STYLE_TRANSFERE'); //send this notification when user desires to turn air art on
@@ -714,7 +714,7 @@ Module.register("SmartMirror-Decision-Maker", {
 					break;
 				case "thumbs_down_left":
 				case "thumbs_down_right":
-					if (self.check_for_validity(self.hideAllLastTime, 0.5, 0.8))
+					if (self.check_for_validity(self.hideAllLastTime, 0.5, 2.5))
 					if(self.facerecognitionshown || self.objectdetectionshown || self.gesturerecognitionshown || self.personrecognitionshown || self.aiartmirrorshown ){
 							self.remove_everything_center_display();
 							self.sendNotification('GESTURE_INTERACTION', 'HIDEALL'); //send this notification when user desires to hide all camera options
@@ -722,12 +722,12 @@ Module.register("SmartMirror-Decision-Maker", {
 					break;
 				case "okay_left":
 					MM.getModules().withClass('MMM-News').enumerate(function(module) {
-						if(!module.hidden && self.currentuserid != -1 && self.readingMode === false && self.check_for_validity(self.newsDetailLastTime)) {
+						if(!module.hidden && self.currentuserid != -1 && self.readingMode === false && self.check_for_validity(self.newsDetailLastTime, 0.5, 2.5)) {
 							self.readingMode = undefined;
 							self.enterReadingMode();
 							setTimeout(() => {self.readingMode = true;}, 1000);
 						
-						} else if (module.hidden && self.readingMode === true && self.check_for_validity(self.newsDetailLastTime)) {
+						} else if (module.hidden && self.readingMode === true && self.check_for_validity(self.newsDetailLastTime, 0.5, 2.5)) {
 							self.readingMode = undefined;
 							self.restoreView();
 							self.leaveReadingMode();
@@ -737,7 +737,7 @@ Module.register("SmartMirror-Decision-Maker", {
 					break;
 				case "okay_right":
 					MM.getModules().withClass('MMM-News').enumerate(function(module) {
-						if(!module.hidden && self.readingMode === false && self.check_for_validity(self.newsNextLastTime)) {
+						if(!module.hidden && self.readingMode === false && self.check_for_validity(self.newsNextLastTime, 0.5, 2.5)) {
 							self.sendNotification('NEWS_NEXT')
 							self.sendNotification('GESTURE_INTERACTION', 'news_next')
 						}
@@ -745,16 +745,16 @@ Module.register("SmartMirror-Decision-Maker", {
 					
 					break;
 				case "one_left":
-					if(self.readingMode && self.check_for_validity(self.newsScrollUpLastTime)){
+					if(self.readingMode && self.check_for_validity(self.newsScrollUpLastTime, 0.5, 2.5)){
 						self.sendNotification('NEWS_DETAIL_SCROLLUP')
 					}
 					break;
 				case "one_right":
-					if(self.readingMode && self.check_for_validity(self.newsScrollDownLastTime)){
+					if(self.readingMode && self.check_for_validity(self.newsScrollDownLastTime, 0.5, 2.5)){
 						self.sendNotification('NEWS_DETAIL_SCROLLDOWN')
 					} else if(!self.readingMode){
 						MM.getModules().withClass('MMM-ITCH-IO').enumerate(function(module) {
-							if(!module.hidden &&  self.check_for_validity(self.gamesNextLastTime)) {
+							if(!module.hidden &&  self.check_for_validity(self.gamesNextLastTime, 0.5, 2.5)) {
 								self.sendNotification('NEXT_GAME_PREVIEW')
 								self.sendNotification('GESTURE_INTERACTION', 'games_next')
 							}
