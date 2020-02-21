@@ -106,7 +106,7 @@ Module.register("SmartMirror-Decision-Maker", {
 	
 		ai_art_mirror: true,
 
-		maxDetFPS: 25.0,
+		maxDetFPS: 30.0,
 	
 		module_list: [
 			{name : "clock", words : ["clock","uhr"]},
@@ -742,12 +742,6 @@ Module.register("SmartMirror-Decision-Maker", {
 							self.sendNotification('GESTURE_INTERACTION', 'news_next')
 						}
 					})
-					MM.getModules().withClass('MMM-ITCH-IO').enumerate(function(module) {
-						if(!module.hidden &&  self.check_for_validity(self.gamesNextLastTime)) {
-							self.sendNotification('NEXT_GAME_PREVIEW')
-							self.sendNotification('GESTURE_INTERACTION', 'games_next')
-						}
-					})
 					
 					break;
 				case "one_left":
@@ -758,7 +752,15 @@ Module.register("SmartMirror-Decision-Maker", {
 				case "one_right":
 					if(self.readingMode && self.check_for_validity(self.newsScrollDownLastTime)){
 						self.sendNotification('NEWS_DETAIL_SCROLLDOWN')
+					} else if(!self.readingMode){
+						MM.getModules().withClass('MMM-ITCH-IO').enumerate(function(module) {
+							if(!module.hidden &&  self.check_for_validity(self.gamesNextLastTime)) {
+								self.sendNotification('NEXT_GAME_PREVIEW')
+								self.sendNotification('GESTURE_INTERACTION', 'games_next')
+							}
+						})
 					}
+
 					break;
 			}
 		});
@@ -950,31 +952,42 @@ Module.register("SmartMirror-Decision-Maker", {
 //----------------------------------------------------------------------//
 	getDom() {
 
+		this.data.header = 'Debug Informations'
+
 		var myTableDiv = document.createElement("DebugTable");
+		myTableDiv.className = "DebugTablexsmall";
 		
 
   		var table = document.createElement('TABLE');
   		//table.border = '1';
-		table.className = "xsmall";
+		table.className = "DebugTablexsmall";
 
   		var tableBody = document.createElement('TBODY');
   		table.appendChild(tableBody);
 		
 		for (var key in this.Debug_infos) {
 			var tr = document.createElement('TR');
-			tableBody.appendChild(tr);
-
+			tr.className = "DebugTablexsmall";
+			tableBody.appendChild(tr);		
 			var td = document.createElement('TD');
       		td.appendChild(document.createTextNode(key));
+			td.className = "DebugTablexsmall";
+			td.width = '50px';
       		tr.appendChild(td);
 			var td = document.createElement('TD');
-      		td.width = '50';
+      		//td.width = '50';
       		td.appendChild(document.createTextNode(this.Debug_infos[key]));
+			td.width = '50px';
       		tr.appendChild(td);   
+			
+			
 		} 
 
   		myTableDiv.appendChild(table);
 
 		return myTableDiv;
+	},
+	getStyles: function(){
+		return ["SmartMirror-Decision-Maker.css"];
 	}
 });

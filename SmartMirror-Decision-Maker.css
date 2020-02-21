@@ -1,0 +1,12 @@
+.SmartMirror-Decision-Maker .DebugTable{
+	max-width: 100px;
+	text-align: left;
+
+}
+
+.SmartMirror-Decision-Maker .DebugTablexsmall{
+	font-size: 17px;
+  	line-height: 17px;
+	text-align: left;
+	color: #eee;
+}
