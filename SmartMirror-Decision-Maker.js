@@ -322,29 +322,36 @@ Module.register("SmartMirror-Decision-Maker", {
 // must decide who is logged in
 //----------------------------------------------------------------------//
 	process_rec_person: function(persons){
+		var self = this;
 		// example:  {"1": {"TrackID": 522, "face": {"confidence": 0.9970833725349748, "w_h": [0.1037, 0.09167], "TrackID": 282, "center": [0.52222, 0.59375], "id": 4, "name": "Nils"}, "w_h": [0.375, 0.40625], "name": "person", "center": [0.4963, 0.72083]}}
 
 		//console.log("[" + this.name + "] process_rec_person triggered " +  JSON.stringify(persons));
 
 
-		if (this.numberOfRecognisedPersons != Object.keys(persons).length){
-			this.numberOfRecognisedPersons = Object.keys(persons).length
-			setTimeout(() => {this.check_for_user_idle();}, 3000);
-			this.adjust_detection_fps();
+		if (self.numberOfRecognisedPersons != Object.keys(persons).length){
+			self.numberOfRecognisedPersons = Object.keys(persons).length
+			//setTimeout(() => {this.check_for_user_idle();}, 3000);
+			
+			if(self.numberOfRecognisedPersons == 0){
+				if(self.currentuserid != -1){
+					self.sendSocketNotification('LOGGIN_USER', -1);
+				}
+			}
+			self.adjust_detection_fps();
 		}
 
 		var login_id = -1;
 		if (Object.keys(persons).length != 0){
 			//console.log("test "+ this.currentpersonTrackID + "        " + JSON.stringify(persons))
-			if (persons.hasOwnProperty(this.currentpersonTrackID)){
+			if (persons.hasOwnProperty(self.currentpersonTrackID)){
 				//console.log(persons[this.currentpersonTrackID])
-				if (persons[this.currentpersonTrackID].hasOwnProperty('face'))
-					login_id = persons[this.currentpersonTrackID].face.id
-				if (persons[this.currentpersonTrackID].hasOwnProperty('gestures')) {
-					this.process_gestures_object(persons[this.currentpersonTrackID].gestures);
+				if (persons[self.currentpersonTrackID].hasOwnProperty('face'))
+					login_id = persons[self.currentpersonTrackID].face.id
+				if (persons[self.currentpersonTrackID].hasOwnProperty('gestures')) {
+					self.process_gestures_object(persons[self.currentpersonTrackID].gestures);
 					//console.log("[" + this.name + "] ceck gestures");
 				} else {
-					this.process_gestures_object([]);
+					self.process_gestures_object([]);
 				}
 			}
 
@@ -352,7 +359,7 @@ Module.register("SmartMirror-Decision-Maker", {
 				for(var key in persons)
 					if (persons[key].hasOwnProperty('face')){
 						login_id = persons[key].face.id;
-						this.currentpersonTrackID = key; //persons["TrackID"];
+						self.currentpersonTrackID = key; //persons["TrackID"];
 						if (login_id > 0) {
 							break;
 						}
@@ -361,16 +368,16 @@ Module.register("SmartMirror-Decision-Maker", {
 		} 
 
 
-		if (login_id != this.currentuserid){
-			this.sendSocketNotification('LOGGIN_USER', login_id);
-			this.currentuserid = login_id;
-			console.log("[" + this.name + "] changing current user to: " + login_id );
-			this.sendNotification('USER_LOGIN', login_id);
-			if(this.readingMode){
-				this.readingMode = false
-				this.leaveReadingMode()
+		if (login_id != self.currentuserid){
+			self.sendSocketNotification('LOGGIN_USER', login_id);
+			self.currentuserid = login_id;
+			console.log("[" + self.name + "] changing current user to: " + login_id );
+			self.sendNotification('USER_LOGIN', login_id);
+			if(self.readingMode){
+				self.readingMode = false
+				self.leaveReadingMode()
 			}
-			setTimeout(()=>{this.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'smartmirror-ai-art-mirror', visibility: false});}, 500)
+			setTimeout(()=>{self.sendNotification('MODULE_VISIBILITY_STATUS', {moduleName: 'smartmirror-ai-art-mirror', visibility: false});}, 500)
 		}
 	},
 
