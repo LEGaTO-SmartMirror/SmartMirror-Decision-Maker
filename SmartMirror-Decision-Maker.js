@@ -10,6 +10,7 @@
 
 Module.register("SmartMirror-Decision-Maker", {
 
+
 	mainManuStateObj: {
 		main: 0,
 		camera:1,
@@ -742,7 +743,7 @@ Module.register("SmartMirror-Decision-Maker", {
 					break;
 				case "okay_right":
 					MM.getModules().withClass('MMM-News').enumerate(function(module) {
-						if(!module.hidden && self.readingMode === false && self.check_for_validity(self.newsNextLastTime, 0.5, 2.5)) {
+						if(!module.hidden && self.readingMode === false && self.check_for_validity(self.newsNextLastTime, 1, 2.5)) {
 							self.sendNotification('NEWS_NEXT')
 							self.sendNotification('GESTURE_INTERACTION', 'news_next')
 						}
@@ -759,7 +760,7 @@ Module.register("SmartMirror-Decision-Maker", {
 						self.sendNotification('NEWS_DETAIL_SCROLLDOWN')
 					} else if(!self.readingMode){
 						MM.getModules().withClass('MMM-ITCH-IO').enumerate(function(module) {
-							if(!module.hidden &&  self.check_for_validity(self.gamesNextLastTime, 0.5, 2.5)) {
+							if(!module.hidden &&  self.check_for_validity(self.gamesNextLastTime, 1, 2.5)) {
 								self.sendNotification('NEXT_GAME_PREVIEW')
 								self.sendNotification('GESTURE_INTERACTION', 'games_next')
 							}
