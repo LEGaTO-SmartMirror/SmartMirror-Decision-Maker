@@ -96,7 +96,8 @@ Module.register("SmartMirror-Decision-Maker", {
 		"MMM-Liquipedia-Dota2",
 		"MMM-DailyDilbert",
 		"MMM-Fuel",
-		"MMM-ITCH-IO"
+		"MMM-ITCH-IO",
+		"weatherforecast"
 	],
 
 
@@ -114,7 +115,7 @@ Module.register("SmartMirror-Decision-Maker", {
 			{name : "calendar", words : ["calendar"]},
 			{name : "smartmirror-speechrecognition", words : ["speech"]},
 			{name : "MMM-cryptocurrency", words : ["crypto"]},
-			{name : "weatherforecast", words : ["weather","wetter"]},
+			{name : "weatherforecast", words : ["wforecast"]},
 			{name : "currentweather", words : ["weather","wetter"]},
 			{name : "newsfeed", words : ["news feed" , "newsfeed"]},
 			{name : "MMM-SimpleLogo", words : ["legato-logo"]},
