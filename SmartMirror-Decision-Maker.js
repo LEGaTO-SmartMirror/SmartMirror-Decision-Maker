@@ -189,6 +189,14 @@ Module.register("SmartMirror-Decision-Maker", {
 				this.Debug_infos['ai art fps'] = payload;
 				this.updateDom();
 				return;
+			case 'BIVITAL_CONNECTED':
+				this.Debug_infos['BiVital Connected'] = true;
+				this.updateDom();
+				return;
+		case 'BIVITAL_DISCONNECTED':
+				this.Debug_infos['BiVital Connected'] = false;
+				this.updateDom();
+				return;
 		}
 
 		//no controle if a selfie is made!
