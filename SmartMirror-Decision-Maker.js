@@ -57,7 +57,7 @@ Module.register("SmartMirror-Decision-Maker", {
 	MainMenuItemsAmount: 0,
 	MainMenuSelected: -1,
 	MainMenuSelectedLast: -1,
-	MainMenuItemSize: 0.0375,
+	MainMenuItemSize: 0.07,//0.0375,
 	MainMenuSelectedTime: 0,
 
 	newsNextLastTime: {timestamp: undefined},
@@ -769,7 +769,7 @@ Module.register("SmartMirror-Decision-Maker", {
 						self.sendNotification('NEWS_DETAIL_SCROLLDOWN')
 					} else if(!self.readingMode){
 						MM.getModules().withClass('MMM-ITCH-IO').enumerate(function(module) {
-							if(!module.hidden &&  self.check_for_validity(self.gamesNextLastTime, 1, 2.5)) {
+							if(!module.hidden &&  self.check_for_validity(self.gamesNextLastTime, 2, 2.5)) {
 								self.sendNotification('NEXT_GAME_PREVIEW')
 								self.sendNotification('GESTURE_INTERACTION', 'games_next')
 							}
