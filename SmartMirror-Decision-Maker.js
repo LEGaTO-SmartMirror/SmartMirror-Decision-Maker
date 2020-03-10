@@ -231,6 +231,7 @@ Module.register("SmartMirror-Decision-Maker", {
 				this.sendSocketNotification('LOGGIN_USER', -1);
 				this.sendNotification('smartmirror-TTS-en',"Welcome to the smart mirror!");
 				//setTimeout(() => {this.start_idle_ai_mirror_art();}, 10000);
+				setTimeout(() => {this.logDataPoints();}, 10000);
 				return;
 			case 'DOM_OBJECTS_CREATED':
 				MM.getModules().enumerate(function(module) {
@@ -247,6 +248,16 @@ Module.register("SmartMirror-Decision-Maker", {
 		}		
 	},
 
+//----------------------------------------------------------------------//
+// Log Data points for data augmentation (Master Thesis)
+//----------------------------------------------------------------------//
+	logDataPoints: function(){
+		self = this
+		var nextLogInSeconds = Math.floor(Math.random() * 40) + 5;
+
+		self.sendNotification('FAKE_INTERACTION')
+		setTimeout(() => {self.logDataPoints();}, nextLogInSeconds * 1000)
+	},
 //----------------------------------------------------------------------//
 // SOCKET NOTIFICATION HANDLER
 //----------------------------------------------------------------------//
@@ -752,7 +763,7 @@ Module.register("SmartMirror-Decision-Maker", {
 					break;
 				case "okay_right":
 					MM.getModules().withClass('MMM-News').enumerate(function(module) {
-						if(!module.hidden && self.readingMode === false && self.check_for_validity(self.newsNextLastTime, 1, 2.5)) {
+						if(!module.hidden && self.readingMode === false && self.check_for_validity(self.newsNextLastTime, 2, 2.5)) {
 							self.sendNotification('NEWS_NEXT')
 							self.sendNotification('GESTURE_INTERACTION', 'news_next')
 						}
@@ -987,12 +998,12 @@ Module.register("SmartMirror-Decision-Maker", {
 			var td = document.createElement('TD');
       		td.appendChild(document.createTextNode(key));
 			td.className = "DebugTablexsmall";
-			td.width = '50px';
+			//td.width = '70px';
       		tr.appendChild(td);
 			var td = document.createElement('TD');
       		//td.width = '50';
       		td.appendChild(document.createTextNode(this.Debug_infos[key]));
-			td.width = '50px';
+			td.width = '30px';
       		tr.appendChild(td);   
 			
 			
