@@ -134,7 +134,8 @@ Module.register("SmartMirror-Decision-Maker", {
 			{name : "MMM-Liquipedia-Dota2", words : ["esports", "dota2"]},
 			{name : "MMM-ITCH-IO", words : ["games"]},
 			{name : "smartmirror-coffeebot", words : ["coffee","coffeebot"]},
-			{name : "SmartMirror-Decision-Maker", words : ["Decision_maker"]}
+			{name : "SmartMirror-Decision-Maker", words : ["Decision_maker"]},
+			{name : "SmartMirror-Image-Handler", words :["image_handler"]}
 		],
 		speechrec_hotword: ["jarvis","smartmirror"]
 	},
@@ -185,6 +186,10 @@ Module.register("SmartMirror-Decision-Maker", {
 				this.Debug_infos['gesture recognition fps'] = payload;
 				this.updateDom();
 				return;
+			case 'IMAGE_HANDLER_FPS':
+				this.Debug_infos['image hander fps'] = payload;
+				this.updateDom();
+				return;
 			case 'AI_ART_FPS':
 				this.Debug_infos['ai art fps'] = payload;
 				this.updateDom();
@@ -193,7 +198,7 @@ Module.register("SmartMirror-Decision-Maker", {
 				this.Debug_infos['BiVital Connected'] = true;
 				this.updateDom();
 				return;
-		case 'BIVITAL_DISCONNECTED':
+			case 'BIVITAL_DISCONNECTED':
 				this.Debug_infos['BiVital Connected'] = false;
 				this.updateDom();
 				return;
@@ -418,7 +423,7 @@ Module.register("SmartMirror-Decision-Maker", {
 			if (this.currentuserid == -1)
 				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 0.0);
 			else
-				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 10.0);
+				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 5.0);
 		}
 		if (this.facerecognitionshown) {
 			this.sendNotification("smartmirror-facerecognition" + "SetFPS", this.config.maxDetFPS);
