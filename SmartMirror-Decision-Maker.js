@@ -415,7 +415,7 @@ Module.register("SmartMirror-Decision-Maker", {
 		if (this.objectdetectionshown) {
 			this.sendNotification("smartmirror-object-detection" + "SetFPS", this.config.maxDetFPS);
 		} else {
-			this.sendNotification("smartmirror-object-detection" + "SetFPS", 4.0)
+			this.sendNotification("smartmirror-object-detection" + "SetFPS", 10.0)
 		}
 		if (this.gesturerecognitionshown) {
 			this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", this.config.maxDetFPS);
@@ -423,7 +423,7 @@ Module.register("SmartMirror-Decision-Maker", {
 			if (this.currentuserid == -1)
 				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 0.0);
 			else
-				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 5.0);
+				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 15.0);
 		}
 		if (this.facerecognitionshown) {
 			this.sendNotification("smartmirror-facerecognition" + "SetFPS", this.config.maxDetFPS);
@@ -965,7 +965,7 @@ Module.register("SmartMirror-Decision-Maker", {
 	start_idle_ai_mirror_art: function(){
 	 	if(this.currentuserid == -1) {
 			if (this.aiartmirrorshown == false){
-				MM.getModules().withClass("smartmirror-center-display").enumerate(function(module) {
+				MM.getModules().withClass("SmartMirror-Image-Handler").enumerate(function(module) {
 					module.show(1000, function() {Log.log(module.name + ' is shown.');}, {lockString: "lockString"});
 				});
 				this.sendNotification('CENTER_DISPLAY', 'STYLE_TRANSFERE');
@@ -1001,17 +1001,15 @@ Module.register("SmartMirror-Decision-Maker", {
 			tr.className = "DebugTablexsmall";
 			tableBody.appendChild(tr);		
 			var td = document.createElement('TD');
-      		td.appendChild(document.createTextNode(key));
+      			td.appendChild(document.createTextNode(key));
 			td.className = "DebugTablexsmall";
 			//td.width = '70px';
-      		tr.appendChild(td);
+      			tr.appendChild(td);
 			var td = document.createElement('TD');
-      		//td.width = '50';
-      		td.appendChild(document.createTextNode(this.Debug_infos[key]));
+      			//td.width = '50';
+      			td.appendChild(document.createTextNode(this.Debug_infos[key]));
 			td.width = '30px';
-      		tr.appendChild(td);   
-			
-			
+      			tr.appendChild(td);  			
 		} 
 
   		myTableDiv.appendChild(table);
