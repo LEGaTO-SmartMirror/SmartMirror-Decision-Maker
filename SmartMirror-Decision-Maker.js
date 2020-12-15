@@ -149,7 +149,7 @@ Module.register("SmartMirror-Decision-Maker", {
 		this.mainManuState = this.mainManuStateObj.main;
 		console.log("[" + this.name + "] " + "sending MAIN_MENU: none");
 		this.sendSocketNotification('CONFIG', this.config);
-		this.Debug_infos['max detection fps'] = this.config.maxDetFPS;
+		this.Debug_infos['max detection FPS'] = this.config.maxDetFPS;
 		//config.language = "de";
 		//Translator.loadCoreTranslations(config.language);
 
@@ -166,36 +166,49 @@ Module.register("SmartMirror-Decision-Maker", {
 		// Debug infos can allways be installed
 		switch (notification) {
 			case 'CENTER_DISPLAY_FPS':
-				this.Debug_infos['center display fps'] = payload;
-				this.updateDom();
+				self.Debug_infos['center display FPS'] = payload;
+				self.updateDom();
 				return;
 			case 'CAMERA_FPS':
-				this.Debug_infos['camera fps'] = payload;
-				this.updateDom();
+				self.Debug_infos['camera FPS'] = payload;
+				self.updateDom();
+				return;
+			case 'IMAGE_HANDLER_FPS':
+				self.Debug_infos['image handler FPS'] = payload;
+				self.updateDom();
 				return;
 			case 'FACE_DET_FPS':
-				this.Debug_infos['face recognition fps'] = payload;
-				this.updateDom();
+				self.Debug_infos['face recognition FPS'] = payload;
+				self.updateDom();
 				return;
 			case 'OBJECT_DET_FPS':
-				this.Debug_infos['object recognition fps'] = payload;
-				this.updateDom();
+				self.Debug_infos['object recognition FPS'] = payload;
+				self.updateDom();
 				return;
 			case 'GESTURE_DET_FPS':
-				this.Debug_infos['gesture recognition fps'] = payload;
-				this.updateDom();
+				self.Debug_infos['gesture recognition FPS'] = payload;
+				self.updateDom();
 				return;
 			case 'AI_ART_FPS':
-				this.Debug_infos['ai art fps'] = payload;
-				this.updateDom();
+				self.Debug_infos['ai art FPS'] = payload;
+				self.updateDom();
 				return;
 			case 'BIVITAL_CONNECTED':
-				this.Debug_infos['BiVital Connected'] = true;
-				this.updateDom();
+				self.Debug_infos['BiVital Connected'] = true;
+				self.updateDom();
 				return;
-		case 'BIVITAL_DISCONNECTED':
-				this.Debug_infos['BiVital Connected'] = false;
-				this.updateDom();
+			case 'BIVITAL_DISCONNECTED':
+				self.Debug_infos['BiVital Connected'] = false;
+				self.updateDom();
+				return;
+			case 'TEGRASTATS' :
+				var total_power = 0;
+				Object.entries(payload).forEach(([key, value]) => {
+					self.Debug_infos[key + " power consumption"] = value.WATT.TOTAL.cur.toFixed(2) + " W";
+					total_power += value.WATT.TOTAL.cur;
+				});
+				self.Debug_infos["total power consumption"] = total_power.toFixed(2) + " W";
+				self.updateDom();
 				return;
 		}
 
@@ -208,30 +221,30 @@ Module.register("SmartMirror-Decision-Maker", {
 		// all control messages
 		switch (notification) {
 			case 'TRANSCRIPT_EN':
-				console.log("[" + this.name + "] " + "transcript received: " + payload);
-				this.process_string(payload);
+				console.log("[" + self.name + "] " + "transcript received: " + payload);
+				self.process_string(payload);
 				return;
 			case 'TRANSCRIPT_DE':
-				console.log("[" + this.name + "] " + "transcript received: " + payload);
-				this.process_string(payload)
+				console.log("[" + self.name + "] " + "transcript received: " + payload);
+				self.process_string(payload)
 				return;
 			case 'MENU_ITEMS':
-				console.log("[" + this.name + "] " + "Menu item has the following items: " + payload);
-				this.MainMenuItems = payload;
-				this.MainMenuItemsAmount = payload.length;
+				console.log("[" + self.name + "] " + "Menu item has the following items: " + payload);
+				self.MainMenuItems = payload;
+				self.MainMenuItemsAmount = payload.length;
 				return;
 			case 'MENU_CLICKED':
-				console.log("[" + this.name + "] " + "Menu item was clicked: " + payload);
-				this.process_string(payload)
+				console.log("[" + self.name + "] " + "Menu item was clicked: " + payload);
+				self.process_string(payload)
 				return;
 			case 'RECOGNIZED_PERSONS':
-				this.process_rec_person(payload.RECOGNIZED_PERSONS);
+				self.process_rec_person(payload.RECOGNIZED_PERSONS);
 				return;
 			case 'ALL_MODULES_STARTED':
-				this.sendSocketNotification('LOGGIN_USER', -1);
-				this.sendNotification('smartmirror-TTS-en',"Welcome to the smart mirror!");
+				self.sendSocketNotification('LOGGIN_USER', -1);
+				self.sendNotification('smartmirror-TTS-en',"Welcome to the smart mirror!");
 				//setTimeout(() => {this.start_idle_ai_mirror_art();}, 10000);
-				setTimeout(() => {this.logDataPoints();}, 10000);
+				setTimeout(() => {self.logDataPoints();}, 10000);
 				return;
 			case 'DOM_OBJECTS_CREATED':
 				MM.getModules().enumerate(function(module) {
@@ -410,15 +423,15 @@ Module.register("SmartMirror-Decision-Maker", {
 		if (this.objectdetectionshown) {
 			this.sendNotification("smartmirror-object-detection" + "SetFPS", this.config.maxDetFPS);
 		} else {
-			this.sendNotification("smartmirror-object-detection" + "SetFPS", 4.0)
+			this.sendNotification("smartmirror-object-detection" + "SetFPS", 10.0)
 		}
 		if (this.gesturerecognitionshown) {
 			this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", this.config.maxDetFPS);
 		} else {
 			if (this.currentuserid == -1)
-				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 0.0);
+				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 15.0);
 			else
-				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 10.0);
+				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 0.0);
 		}
 		if (this.facerecognitionshown) {
 			this.sendNotification("smartmirror-facerecognition" + "SetFPS", this.config.maxDetFPS);
@@ -1003,7 +1016,7 @@ Module.register("SmartMirror-Decision-Maker", {
 			var td = document.createElement('TD');
       		//td.width = '50';
       		td.appendChild(document.createTextNode(this.Debug_infos[key]));
-			td.width = '30px';
+			td.width = '70px';
       		tr.appendChild(td);   
 			
 			
