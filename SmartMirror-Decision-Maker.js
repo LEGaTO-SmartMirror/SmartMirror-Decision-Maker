@@ -134,7 +134,8 @@ Module.register("SmartMirror-Decision-Maker", {
 			{name : "MMM-Liquipedia-Dota2", words : ["esports", "dota2"]},
 			{name : "MMM-ITCH-IO", words : ["games"]},
 			{name : "smartmirror-coffeebot", words : ["coffee","coffeebot"]},
-			{name : "SmartMirror-Decision-Maker", words : ["Decision_maker"]}
+			{name : "SmartMirror-Decision-Maker", words : ["Decision_maker"]},
+			{name : "SmartMirror-Image-Handler", words :["image_handler"]}
 		],
 		speechrec_hotword: ["jarvis","smartmirror"]
 	},
@@ -281,7 +282,10 @@ Module.register("SmartMirror-Decision-Maker", {
 			//console.log("test " + JSON.parse(payload)[0])
 			
 			this.adjustViewLogin((JSON.parse(payload))[0]);
+
 			
+			self.Debug_infos['user logged in'] = JSON.parse(payload)[0]["name"];
+			self.updateDom();			
 	
 			if (JSON.parse(payload)[0]["ID"] > 0) {
 				
@@ -363,6 +367,8 @@ Module.register("SmartMirror-Decision-Maker", {
 
 
 		if (self.numberOfRecognisedPersons != Object.keys(persons).length){
+			if( self.numberOfRecognisedPersons == 0)
+				self.adjust_detection_fps();
 			self.numberOfRecognisedPersons = Object.keys(persons).length
 			//setTimeout(() => {this.check_for_user_idle();}, 3000);
 			
@@ -371,7 +377,7 @@ Module.register("SmartMirror-Decision-Maker", {
 					self.sendSocketNotification('LOGGIN_USER', -1);
 				}
 			}
-			self.adjust_detection_fps();
+			
 		}
 
 		var login_id = -1;
@@ -423,15 +429,15 @@ Module.register("SmartMirror-Decision-Maker", {
 		if (this.objectdetectionshown) {
 			this.sendNotification("smartmirror-object-detection" + "SetFPS", this.config.maxDetFPS);
 		} else {
-			this.sendNotification("smartmirror-object-detection" + "SetFPS", 10.0)
+			this.sendNotification("smartmirror-object-detection" + "SetFPS", 16.0)
 		}
 		if (this.gesturerecognitionshown) {
 			this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", this.config.maxDetFPS);
 		} else {
 			if (this.currentuserid == -1)
-				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 15.0);
-			else
 				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 0.0);
+			else
+				this.sendNotification("smartmirror-gesture-recognition" + "SetFPS", 16.0);
 		}
 		if (this.facerecognitionshown) {
 			this.sendNotification("smartmirror-facerecognition" + "SetFPS", this.config.maxDetFPS);
@@ -439,7 +445,7 @@ Module.register("SmartMirror-Decision-Maker", {
 			if (this.numberOfRecognisedPersons == 0)
 				this.sendNotification("smartmirror-facerecognition" + "SetFPS", 0.0);
 			else
-				this.sendNotification("smartmirror-facerecognition" + "SetFPS", 4.0);
+				this.sendNotification("smartmirror-facerecognition" + "SetFPS", 16.0);
 		}
 		if (this.aiartmirrorshown) {
 			if (this.numberOfRecognisedPersons == 0) {
@@ -974,6 +980,9 @@ Module.register("SmartMirror-Decision-Maker", {
 	 	if(this.currentuserid == -1) {
 			if (this.aiartmirrorshown == false){
 				MM.getModules().withClass("smartmirror-center-display").enumerate(function(module) {
+					module.show(1000, function() {Log.log(module.name + ' is shown.');}, {lockString: "lockString"});
+				});
+				MM.getModules().withClass("SmartMirror-Image-Handler").enumerate(function(module) {
 					module.show(1000, function() {Log.log(module.name + ' is shown.');}, {lockString: "lockString"});
 				});
 				this.sendNotification('CENTER_DISPLAY', 'STYLE_TRANSFERE');
